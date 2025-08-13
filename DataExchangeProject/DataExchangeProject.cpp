@@ -20,13 +20,14 @@ const int delayMS = 100;
 struct iphdr
 {
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-    unsigned int ihl : 4;
-    unsigned int version : 4;
+    uint8_t ihl : 4;
+    uint8_t version : 4;
 #elif __BYTE_ORDER == __BIG_ENDIAN
-    unsigned int version : 4;
-    unsigned int ihl : 4;
+    uint8_t version : 4;
+    uint8_t ihl : 4;
 #else
 # error	"Please fix <bits/endian.h>"
+
 #endif
     uint8_t tos;
     uint16_t tot_len;
@@ -40,7 +41,9 @@ struct iphdr
     /*The options start here. */
 };
 
-/*Оператор >>  означает побитовый сдвиг числа вправо на определенное количество разрядов. В данном случае sum >> 16
+/* Функция для подсчета контрольной суммы
+
+Оператор >>  означает побитовый сдвиг числа вправо на определенное количество разрядов. В данном случае sum >> 16
 означает сдвиг sum на 16 разрядов вправо.
 
 Побитовые операторы & и | используются для манипуляции битами чисел. В случае подсчета контрольной суммы IP-заголовка,
@@ -53,7 +56,6 @@ sum + (sum >> 16) корректно складывает результаты �
 result является однократно инвертированным(~) суммарным результатом.
 Эти операции являются частью алгоритма подсчета контрольной суммы IPv4 заголовка и позволяют вычислить контрольную сумму, учитывая все поля структуры. */
 
-// Функция для подсчета контрольной суммы
 unsigned short checksum(void* b, int len) {
     unsigned short* buf = static_cast<unsigned short*>(b);
     unsigned int sum = 0;
@@ -101,7 +103,6 @@ void serverFunction() {
     struct sockaddr_in serverAddr;
     memset(&serverAddr, 0, sizeof serverAddr);
     serverAddr.sin_family = AF_INET;
-    /*serverAddr.sin_port = htons(0);*/
     if (inet_pton(AF_INET, "192.168.88.43", &serverAddr.sin_addr) < 0) {
         cerr << "Ошибка при переводе адреса: " << WSAGetLastError() << "\n";
         closesocket(rawSocket);
@@ -158,22 +159,7 @@ void serverFunction() {
 int main() {
     setlocale(LC_ALL, "ru");
     serverFunction();
-    /*thread serverThread(serverFunction);*/
-    /*this_thread::sleep_for(milliseconds(1000));
-    thread clientThread(clientFunction);
-
-    serverThread.join();
-    clientThread.join();*/
 
     cout << "Конец программы\n";
-    //cout << "Версия протокола IP: " << ipheader.version << "\n";
-    //cout << "Длина заголовка IP: " << ipheader.ihl << " байтов" << "\n";
-    //cout << "ToS: " << static_cast<int>(ipheader.tos) << "\n";
-    //cout << "Суммарная длина: " << ipheader.tot_len << " байтов" << "\n";
-    //cout << "Идентификатор: " << ipheader.id << "\n";
-    //cout << "TTL: " << static_cast<int>(ipheader.ttl) << "\n";
-    //cout << "Протокол: " << static_cast<int>(ipheader.protocol) << "\n";
-    //cout << "Контрольная сумма: " << ntohs(ipheader.check) << "\n"; // hex - для 16-ного перевода, dec (по умолчанию) - для 10-ного
-
     return 0;
 }
