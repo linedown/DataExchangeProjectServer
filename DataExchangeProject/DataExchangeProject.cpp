@@ -10,12 +10,10 @@
 #define IPPROTO_LAN 63
 
 using namespace std;
-using namespace chrono;
 
 const int messages = 10;
 const int dataLength = 1024;
 const int packetLength = 2048;
-const int delayMS = 100;
 
 struct iphdr
 {
@@ -26,7 +24,7 @@ struct iphdr
     uint8_t version : 4;
     uint8_t ihl : 4;
 #else
-# error	"Please fix <bits/endian.h>"
+# error	"Исправьте <bits/endian.h>"
 
 #endif
     uint8_t tos;
@@ -38,7 +36,6 @@ struct iphdr
     uint16_t check;
     uint32_t saddr;
     uint32_t daddr;
-    /*The options start here. */
 };
 
 /* Функция для подсчета контрольной суммы
@@ -148,8 +145,6 @@ void serverFunction() {
         cout << "Данные: \n";
         for (char i : packetBuffer) cout << i;
         cout << "\n";
-
-        //this_thread::sleep_for(milliseconds(delayMS));
     }
 
     closesocket(rawSocket);
