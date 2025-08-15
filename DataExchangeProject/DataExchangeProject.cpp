@@ -135,7 +135,7 @@ void serverFunction() {
         char data[dataLength];
         memset(data, 'A' + i % 26, dataLength);
 
-        char packetBuffer[packetLength];
+        char packetBuffer[packetLength] = {0};
         memcpy(packetBuffer, &ipheader, sizeof iphdr);
         memcpy(packetBuffer + sizeof iphdr, data, dataLength);
 
